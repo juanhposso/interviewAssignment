@@ -1,0 +1,92 @@
+service: awsProjectInterview
+frameworkVersion: "3"
+
+custom:
+  appointmentsTableName: "appointments-table-${sls:stage}"
+  patientsTableName: "patients-table-${sls:stage}"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:*
+          Resource: "*"
+  environment:
+    APPOINTMENT_TABLE: ${self:custom.appointmentsTableName}
+    PATIENT_TABLE: ${self:custom.patientsTableName}
+
+functions:
+  api:
+    handler: index.handler
+    events:
+      - httpApi: "*"
+
+resources:
+  Resources:
+    AppointmentsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.appointmentsTableName}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: status
+            AttributeType: S
+          - AttributeName: start
+            AttributeType: S
+          - AttributeName: end
+            AttributeType: S
+          - AttributeName: participant
+            AttributeType: S
+          - AttributeName: location
+            AttributeType: S
+          - AttributeName: description
+            AttributeType: S
+          - AttributeName: comment
+            AttributeType: S
+          - AttributeName: createdDate
+            AttributeType: S
+          - AttributeName: lastUpdatedDate
+            AttributeType: S
+          - AttributeName: patientReference
+            AttributeType: S
+          - AttributeName: statusHistory
+            AttributeType: S
+          - AttributeName: priority
+            AttributeType: S
+          - AttributeName: minutesDuration
+            AttributeType: N
+          - AttributeName: serviceType
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+
+    PatientsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.patientsTableName}
+        AttributeDefinitions:
+          - AttributeName: patientId
+            AttributeType: S
+          - AttributeName: name
+            AttributeType: S
+          - AttributeName: dateOfBirth
+            AttributeType: S
+          - AttributeName: address
+            AttributeType: S
+          - AttributeName: phoneNumber
+            AttributeType: S
+        KeySchema:
+          - AttributeName: patientId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
