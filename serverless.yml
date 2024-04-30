@@ -2,8 +2,8 @@ service: awsProjectInterview
 frameworkVersion: "3"
 
 custom:
-  appointmentsTableName: "appointments-table-${sls:stage}"
-  patientsTableName: "patients-table-${sls:stage}"
+  appointmentsTable: "appointments-table-${sls:stage}"
+  patientsTable: "patients-table-${sls:stage}"
 
 provider:
   name: aws
@@ -16,8 +16,8 @@ provider:
             - dynamodb:*
           Resource: "*"
   environment:
-    APPOINTMENT_TABLE: ${self:custom.appointmentsTableName}
-    PATIENT_TABLE: ${self:custom.patientsTableName}
+    APPOINTMENT_TABLE: ${self:custom.appointmentsTable}
+    PATIENT_TABLE: ${self:custom.patientsTable
 
 functions:
   api:
@@ -30,7 +30,7 @@ resources:
     AppointmentsTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.appointmentsTableName}
+        TableName: ${self:custom.appointmentsTable}
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
@@ -72,7 +72,7 @@ resources:
     PatientsTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.patientsTableName}
+        TableName: ${self:custom.patientsTable}
         AttributeDefinitions:
           - AttributeName: patientId
             AttributeType: S
