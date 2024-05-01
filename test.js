@@ -16,15 +16,30 @@ function parseMessage(message) {
 	const PIDSegment = segments
 		.find((segment) => segment.startsWith("PID"))
 		.split("|");
-	const SCHSegment = segments.find((segment) => segment.startsWith("SCH"));
+	const SCHSegment = segments
+		.find((segment) => segment.startsWith("SCH"))
+		.split("|");
 
-	console.log("PIDSegment", PIDSegment);
+	//console.log("PIDSegment", PIDSegment);
 	console.log("SCHSegment", SCHSegment);
 
-	const patientInfo = {};
-	const appointmentInfo = {};
+	const patientInfo = {
+		id: PIDSegment[3],
+		name: PIDSegment[5],
+		dob: PIDSegment[7],
+		address: PIDSegment[11],
+		phone: PIDSegment[13],
+	};
 
-	for (const segment of segments) {
+	const appointmentInfo = {
+		type: SCHSegment[7].split("^")[1],
+		id: SCHSegment[3],
+		dateTime: SCHSegment[4],
+		location: SCHSegment[7].split("^")[0],
+		physician: SCHSegment[8],
+	};
+
+	/* for (const segment of segments) {
 		const [segmentType, ...fields] = segment.split("|");
 		if (!segmentType) continue;
 
@@ -47,13 +62,20 @@ function parseMessage(message) {
 				appointmentInfo.physician = physician.split("~")[1];
 				break;
 		}
-	}
+	} */
 
 	return { patientInfo, appointmentInfo };
 }
 
 // Parse the HL7 message
 const { patientInfo, appointmentInfo } = parseMessage(message);
+
+console.log(`Patient demographics: ${patientInfo.id} \n`);
+console.log(`Appointments: ${appointmentInfo.type}`);
+console.log(`Appointments: ${appointmentInfo.id}`);
+console.log(`Appointments: ${appointmentInfo.dateTime}`);
+console.log(`Appointments: ${appointmentInfo.location}`);
+console.log(`Appointments: ${appointmentInfo.physician}`);
 
 //console.log("Patient demographics:");
 //console.log(`  ID: ${patientInfo.id}`);
